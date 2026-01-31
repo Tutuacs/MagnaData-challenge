@@ -27,11 +27,11 @@ public class TodoRepository(ApplicationDbContext db) : ITodoRepository
     
     public async Task<int> UpdateAsync(Guid id, UpdateTodoDto todo)
     {
-        var UpdatedRows = 0;
+        var UpdatedRows = -1;
         var exists = await _db.Todo.FindAsync(Convert.ToString(id));
         if (exists != null)
         {
-            exists.Description = todo.Description;
+            exists.Description = !string.IsNullOrEmpty(todo.Description) ? todo.Description : exists.Description;
             if (todo.Completed.HasValue)
             {
                 exists.Completed = todo.Completed.Value 

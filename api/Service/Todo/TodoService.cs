@@ -56,7 +56,37 @@ public partial class TodoService(ITodoRepository todoRepository, ILogger<TodoSer
 
     public async Task<ServiceResponse<string>> UpdateTodoAsync(Guid id, UpdateTodoDto data)
     {
-        return new ServiceResponse<string> { Data = $"UpdateTodo: {id} - {data}" };
+        var result = await _todoRepository.UpdateAsync(id, data);
+
+        switch (result)
+        {
+            // * Not found
+            case < 0:
+                return new ServiceResponse<string>
+                {
+                    StatusCode = System.Net.HttpStatusCode.NotFound,
+                    Message = "Todo not found"
+                };
+            // ! Not updated
+            case 0:
+                _logger.Log(LogLevel.Error, "Todo could not be updated with id: {Id}", id);
+                return new ServiceResponse<string>
+                {
+                    StatusCode = System.Net.HttpStatusCode.InternalServerError,
+                    Message = "Todo not updated"
+                };
+            // ! Updated More than one record
+            case > 1:
+                _logger.Log(LogLevel.Error, "More than one record updated when trying to update todo with id: {Id}", id);
+                return new ServiceResponse<string>
+                {
+                    StatusCode = System.Net.HttpStatusCode.OK,
+                    Message = "Multiple todos updated"
+                };
+            // * Updated one record
+            default:
+                return new ServiceResponse<string> { StatusCode = System.Net.HttpStatusCode.OK };
+        }
     }
 
     public async Task<ServiceResponse<string>> DeleteTodoAsync(Guid id)
