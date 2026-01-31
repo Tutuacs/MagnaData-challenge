@@ -1,12 +1,14 @@
 namespace api.Service.Todo;
 
-using api.Dtos.Todo;
+using api.Helpers;
+using api.Model.Dtos.Todo;
+using api.Model.Entities;
 
 public interface ITodoService
 {
-    String GetTodos();
-    String GetTodoById(int id);
-    String CreateTodo(CreateTodoDto data);
-    String UpdateTodo(int id, UpdateTodoDto data);
-    String DeleteTodo(int id);
+    ServiceResponse<string> CreateTodo(CreateTodoDto data);
+    ServiceResponse<List<TodoDb>> GetTodos();
+    ServiceResponse<TodoDb?> GetTodoById(string id);
+    ServiceResponse<string> UpdateTodo(string id, UpdateTodoDto data);
+    ServiceResponse<string> DeleteTodo(string id);
 }

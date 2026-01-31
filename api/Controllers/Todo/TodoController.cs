@@ -1,65 +1,70 @@
 namespace api.Controllers.Todo;
 
-using api.Dtos.Todo;
+using api.Helpers;
+using api.Model.Dtos.Todo;
 using api.Service.Todo;
 using Microsoft.AspNetCore.Mvc;
 
 
 [ApiController]
 [Route("[controller]")]
-public class TodoController : ControllerBase
+public class TodoController(ITodoService todoService) : ControllerBase
 {
 
-    private readonly ILogger<TodoController> _logger;
-    private readonly ITodoService todoService;
-
-    public TodoController(ILogger<TodoController> logger, ITodoService todoService)
-    {
-        _logger = logger;
-        this.todoService = todoService;
-    }
+    private readonly ITodoService todoService = todoService;
 
     [HttpPost]
     public IActionResult CreateTodo([FromBody] CreateTodoDto data)
     {
-
-        string result = todoService.CreateTodo(data);
-
-        return Ok(result);
+        var result = todoService.CreateTodo(data);
+        return StatusCode((int)result.StatusCode, new ApiResponse<object>
+        {
+            Data = result.Data,
+            Message = result.Message
+        });
     }
 
     [HttpGet]
     public IActionResult GetTodos()
     {
-
-        string result = todoService.GetTodos();
-
-        return Ok(result);
+        var result = todoService.GetTodos();
+        return StatusCode((int)result.StatusCode, new ApiResponse<object>
+        {
+            Data = result.Data,
+            Message = result.Message
+        });
     }
 
     [HttpGet("{id}")]
-    public IActionResult GetTodoById(int id)
+    public IActionResult GetTodoById(string id)
     {
-        string result = todoService.GetTodoById(id);
-
-        return Ok(result);
+        var result = todoService.GetTodoById(id);
+        return StatusCode((int)result.StatusCode, new ApiResponse<object>
+        {
+            Data = result.Data,
+            Message = result.Message
+        });
     }
 
     [HttpPut("{id}")]
-    public IActionResult UpdateTodo(int id, [FromBody] UpdateTodoDto data)
+    public IActionResult UpdateTodo(string id, [FromBody] UpdateTodoDto data)
     {
-
-        string result = todoService.UpdateTodo(id, data);
-
-        return Ok(result);
+        var result = todoService.UpdateTodo(id, data);
+        return StatusCode((int)result.StatusCode, new ApiResponse<object>
+        {
+            Data = result.Data,
+            Message = result.Message
+        });
     }
 
     [HttpDelete("{id}")]
-        public IActionResult DeleteTodo(int id)
+    public IActionResult DeleteTodo(string id)
     {
-
-        string result = todoService.DeleteTodo(id);
-
-        return Ok(result);
+        var result = todoService.DeleteTodo(id);
+        return StatusCode((int)result.StatusCode, new ApiResponse<object>
+        {
+            Data = result.Data,
+            Message = result.Message
+        });
     }
 }
