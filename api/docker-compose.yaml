@@ -1,0 +1,14 @@
+services:
+  mysqldb:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=MagnadataPass
+      - MYSQL_DATABASE=MagnaData
+    ports:
+      - 3300:3306
+    volumes:
+      - db:/var/lib/mysql
+
+volumes:
+  db:
