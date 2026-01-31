@@ -11,9 +11,9 @@ public partial class TodoService(ITodoRepository todoRepository, ILogger<TodoSer
     private readonly ITodoRepository _todoRepository = todoRepository;
     private readonly ApiLogger<TodoService> _logger = new (logger);
 
-    public ServiceResponse<string> CreateTodo(CreateTodoDto data)
+    public async Task<ServiceResponse<string>> CreateTodoAsync(CreateTodoDto data)
     {
-        var result = _todoRepository.Create(data);
+        var result = await _todoRepository.CreateAsync(data);
 
         if (result == 0)
         {
@@ -38,25 +38,60 @@ public partial class TodoService(ITodoRepository todoRepository, ILogger<TodoSer
         return new ServiceResponse<string> { StatusCode = System.Net.HttpStatusCode.Created  };
     }
 
-    public ServiceResponse<List<TodoDb>> GetTodos()
+    public async Task<ServiceResponse<List<TodoDb>>> GetTodosAsync()
     {
-        var result = _todoRepository.GetAll();
+        var result = await _todoRepository.GetAllAsync();
         return new ServiceResponse<List<TodoDb>> { Data = result };
     }
 
-    public ServiceResponse<TodoDb?> GetTodoById(string id)
+    public async Task<ServiceResponse<TodoDb?>> GetTodoByIdAsync(Guid id)
     {
-        return new ServiceResponse<TodoDb?> { Data = null };
+        var result = await _todoRepository.GetByIdAsync(id);
+        if (result == null)
+        {
+            return new ServiceResponse<TodoDb?> { StatusCode = System.Net.HttpStatusCode.OK, Message= "Not found" };
+        }
+        return new ServiceResponse<TodoDb?> { Data = result };
     }
 
-    public ServiceResponse<string> UpdateTodo(string id, UpdateTodoDto data)
+    public async Task<ServiceResponse<string>> UpdateTodoAsync(Guid id, UpdateTodoDto data)
     {
         return new ServiceResponse<string> { Data = $"UpdateTodo: {id} - {data}" };
     }
 
-    public ServiceResponse<string> DeleteTodo(string id)
+    public async Task<ServiceResponse<string>> DeleteTodoAsync(Guid id)
     {
-        return new ServiceResponse<string> { Data = $"DeleteTodo: {id}" };
+        var result = await _todoRepository.DeleteAsync(id);
+
+        switch (result)
+        {
+            // * Not found
+            case < 0:
+                return new ServiceResponse<string>
+                {
+                    StatusCode = System.Net.HttpStatusCode.NotFound,
+                    Message = "Todo not found"
+                };
+            // ! Not deleted
+            case 0:
+                _logger.Log(LogLevel.Error, "Todo could not be deleted with id: {Id}", id);
+                return new ServiceResponse<string>
+                {
+                    StatusCode = System.Net.HttpStatusCode.InternalServerError,
+                    Message = "Todo not deleted"
+                };
+            // ! Deleted More than one record
+            case > 1:
+                _logger.Log(LogLevel.Error, "More than one record deleted when trying to delete todo with id: {Id}", id);
+                return new ServiceResponse<string>
+                {
+                    StatusCode = System.Net.HttpStatusCode.OK,
+                    Message = "Multiple todos deleted"
+                };
+            // * Deleted one record
+            default:
+                return new ServiceResponse<string> { StatusCode = System.Net.HttpStatusCode.OK };
+        }
     }
 
 }

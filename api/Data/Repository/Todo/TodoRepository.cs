@@ -1,7 +1,6 @@
-using System.Data.Common;
 using api.Model.Dtos.Todo;
 using api.Model.Entities;
-using Microsoft.AspNetCore.Connections;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Data.Repository.Todo;
 
@@ -9,24 +8,27 @@ public class TodoRepository(ApplicationDbContext db) : ITodoRepository
 {
     private readonly ApplicationDbContext _db = db;
 
-    public int Create(CreateTodoDto todo)
+    public async Task<int> CreateAsync(CreateTodoDto todo)
     {
         _db.Todo.Add(new TodoDb(todo.Description));
-        var affectedRows = _db.SaveChanges();
+        var affectedRows = await _db.SaveChangesAsync();
         return affectedRows;
     }
-    public List<TodoDb> GetAll()
+    
+    public async Task<List<TodoDb>> GetAllAsync()
     {
-        return [.. _db.Todo];
+        return await _db.Todo.ToListAsync();
     }
-    public TodoDb? GetById(string id)
+    
+    public async Task<TodoDb?> GetByIdAsync(Guid id)
     {
-        return _db.Todo.Find(id);
+        return await _db.Todo.FindAsync(Convert.ToString(id));
     }
-    public int Update(string id, UpdateTodoDto todo)
+    
+    public async Task<int> UpdateAsync(Guid id, UpdateTodoDto todo)
     {
         var UpdatedRows = 0;
-        var exists = _db.Todo.Find(id);
+        var exists = await _db.Todo.FindAsync(Convert.ToString(id));
         if (exists != null)
         {
             exists.Description = todo.Description;
@@ -36,18 +38,19 @@ public class TodoRepository(ApplicationDbContext db) : ITodoRepository
                     ? DateOnly.FromDateTime(DateTime.Now) 
                     : null;
             }
-            UpdatedRows = _db.SaveChanges();
+            UpdatedRows = await _db.SaveChangesAsync();
         }
         return UpdatedRows;
     }
-    public int Delete(string id)
+    
+    public async Task<int> DeleteAsync(Guid id)
     {
-        var DeletedRows = 0;
-        var todo = _db.Todo.Find(id);
+        var DeletedRows = -1;
+        var todo = await _db.Todo.FindAsync(Convert.ToString(id));
         if (todo != null)
         {
             _db.Todo.Remove(todo);
-            DeletedRows = _db.SaveChanges();
+            DeletedRows = await _db.SaveChangesAsync();
         }
 
         return DeletedRows;

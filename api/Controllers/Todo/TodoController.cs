@@ -14,9 +14,9 @@ public class TodoController(ITodoService todoService) : ControllerBase
     private readonly ITodoService todoService = todoService;
 
     [HttpPost]
-    public IActionResult CreateTodo([FromBody] CreateTodoDto data)
+    public async Task<IActionResult> CreateTodo([FromBody] CreateTodoDto data)
     {
-        var result = todoService.CreateTodo(data);
+        var result = await todoService.CreateTodoAsync(data);
         return StatusCode((int)result.StatusCode, new ApiResponse<object>
         {
             Data = result.Data,
@@ -25,9 +25,9 @@ public class TodoController(ITodoService todoService) : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult GetTodos()
+    public async Task<IActionResult> GetTodos()
     {
-        var result = todoService.GetTodos();
+        var result = await todoService.GetTodosAsync();
         return StatusCode((int)result.StatusCode, new ApiResponse<object>
         {
             Data = result.Data,
@@ -36,9 +36,9 @@ public class TodoController(ITodoService todoService) : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public IActionResult GetTodoById(string id)
+    public async Task<IActionResult> GetTodoById(Guid id)
     {
-        var result = todoService.GetTodoById(id);
+        var result = await todoService.GetTodoByIdAsync(id);
         return StatusCode((int)result.StatusCode, new ApiResponse<object>
         {
             Data = result.Data,
@@ -47,9 +47,9 @@ public class TodoController(ITodoService todoService) : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public IActionResult UpdateTodo(string id, [FromBody] UpdateTodoDto data)
+    public async Task<IActionResult> UpdateTodo(Guid id, [FromBody] UpdateTodoDto data)
     {
-        var result = todoService.UpdateTodo(id, data);
+        var result = await todoService.UpdateTodoAsync(id, data);
         return StatusCode((int)result.StatusCode, new ApiResponse<object>
         {
             Data = result.Data,
@@ -58,9 +58,9 @@ public class TodoController(ITodoService todoService) : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public IActionResult DeleteTodo(string id)
+    public async Task<IActionResult> DeleteTodo(Guid id)
     {
-        var result = todoService.DeleteTodo(id);
+        var result = await todoService.DeleteTodoAsync(id);
         return StatusCode((int)result.StatusCode, new ApiResponse<object>
         {
             Data = result.Data,

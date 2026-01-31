@@ -6,9 +6,9 @@ using api.Model.Entities;
 
 public interface ITodoService
 {
-    ServiceResponse<string> CreateTodo(CreateTodoDto data);
-    ServiceResponse<List<TodoDb>> GetTodos();
-    ServiceResponse<TodoDb?> GetTodoById(string id);
-    ServiceResponse<string> UpdateTodo(string id, UpdateTodoDto data);
-    ServiceResponse<string> DeleteTodo(string id);
+    Task<ServiceResponse<string>> CreateTodoAsync(CreateTodoDto data);
+    Task<ServiceResponse<List<TodoDb>>> GetTodosAsync();
+    Task<ServiceResponse<TodoDb?>> GetTodoByIdAsync(Guid id);
+    Task<ServiceResponse<string>> UpdateTodoAsync(Guid id, UpdateTodoDto data);
+    Task<ServiceResponse<string>> DeleteTodoAsync(Guid id);
 }

@@ -5,9 +5,9 @@ namespace api.Data.Repository.Todo;
 
 public interface ITodoRepository
 {
-    int Create(CreateTodoDto todo);
-    List<TodoDb> GetAll();
-    TodoDb? GetById(string id);
-    int Update(string id, UpdateTodoDto todo);
-    int Delete(string id);
+    Task<int> CreateAsync(CreateTodoDto todo);
+    Task<List<TodoDb>> GetAllAsync();
+    Task<TodoDb?> GetByIdAsync(Guid id);
+    Task<int> UpdateAsync(Guid id, UpdateTodoDto todo);
+    Task<int> DeleteAsync(Guid id);
 }
