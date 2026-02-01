@@ -9,8 +9,8 @@ export interface CreateTodoDTO {
   description: string;
 }
 
-export interface UpdateTodoDTO {
+export interface UpdateTodoDto {
   description?: string;
-  completedAt?: Date | null;
+  completed?: boolean;
 }
 
