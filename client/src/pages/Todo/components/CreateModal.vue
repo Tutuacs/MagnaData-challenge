@@ -31,8 +31,8 @@ const handleClose = () => {
   emit("close");
 };
 
-const handleCreate = () => {
-  createTodo(newTodo.value);
+const handleCreate = async () => {
+  await createTodo(newTodo.value);
   emit("create");
   emit("close");
 };
