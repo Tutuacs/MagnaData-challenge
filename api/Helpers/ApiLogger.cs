@@ -8,8 +8,8 @@ public partial class ApiLogger<T>(ILogger<T> logger)
     {
         if (_logger.IsEnabled(level))
         {
-            var formattedMessage = args.Length > 0 ? string.Format(message, args) : message;
-            _logger.Log(level, "{Message}", formattedMessage);
+            // Passa direto para o logger que lida com placeholders estruturados ({Id}, {Data}, etc.)
+            _logger.Log(level, message, args);
         }
     }
 

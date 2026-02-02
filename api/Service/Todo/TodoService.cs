@@ -69,7 +69,7 @@ public partial class TodoService(ITodoRepository todoRepository, ILogger<TodoSer
                 };
             // ! Not updated
             case 0:
-                _logger.Log(LogLevel.Error, "Todo could not be updated with id: {Id}", id);
+                _logger.Log(LogLevel.Error, "Todo could not be updated with id: {id}", id);
                 return new ServiceResponse<string>
                 {
                     StatusCode = System.Net.HttpStatusCode.InternalServerError,
@@ -104,7 +104,7 @@ public partial class TodoService(ITodoRepository todoRepository, ILogger<TodoSer
                 };
             // ! Not deleted
             case 0:
-                _logger.Log(LogLevel.Error, "Todo could not be deleted with id: {Id}", id);
+                _logger.Log(LogLevel.Error, "Todo could not be deleted with id: {id}", id);
                 return new ServiceResponse<string>
                 {
                     StatusCode = System.Net.HttpStatusCode.InternalServerError,
