@@ -2,6 +2,7 @@
 import { useTodo } from "@/composables/Todo";
 import { Todo } from "@/types/Todo";
 import { DocumentDuplicateIcon, TrashIcon } from "@heroicons/vue/24/outline";
+import { inject } from "vue";
 
 // TodoItem.vue html based on: https://www.tailwindgen.com/
 const props = defineProps({
@@ -11,22 +12,21 @@ const props = defineProps({
   },
 });
 
+const toggleUpdateModal = inject<() => void>("todoModal")!;
+const toggleCopyAction = inject<() => void>("copyAction")!;
+
 const { deleteTodo, actualTodo } = useTodo();
 
 const copyToClipboard = async (text: string) => {
   await navigator.clipboard.writeText(text);
-  handleCopyId();
+  toggleCopyAction();
 };
 
 const emit = defineEmits(["update-modal", "delete-todo", "copy-id"]);
 
 const handleUpdate = () => {
   actualTodo.value = props.item;
-  emit("update-modal");
-};
-
-const handleCopyId = () => {
-  emit("copy-id");
+  toggleUpdateModal();
 };
 
 const handleDelete = async () => {
@@ -82,7 +82,7 @@ const handleDelete = async () => {
         </div>
         <button
           class="group cursor-pointer p-3 text-center bg-amber-400 rounded-br-xl"
-          :class="{ 'bg-green-500': item.completed }"
+          :class="{ 'bg-green-500 hover:animate-pulse': item.completed }"
           @click="handleUpdate"
         >
           <div class="font-medium text-sm">

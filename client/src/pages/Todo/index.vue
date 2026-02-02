@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { provide, ref } from "vue";
 import CreateModal from "./components/CreateModal.vue";
 import UpdateModal from "./components/UpdateModal.vue";
 import { Todo, UpdateTodoDto } from "@/types/Todo";
@@ -10,7 +10,19 @@ import { useTodo } from "@/composables/Todo";
 
 const createModal = ref(false);
 const updateModal = ref(false);
+const copyAction = ref(false);
 const todoGridRef = ref<InstanceType<typeof TodoGrid>>();
+
+const toggleUpdateModal = () => {
+  updateModal.value = !updateModal.value;
+};
+
+const toggleCopyAction = () => {
+  copyAction.value = !copyAction.value;
+};
+
+provide("todoModal", toggleUpdateModal);
+provide("copyAction", toggleCopyAction);
 
 const search = ref("");
 
@@ -22,19 +34,19 @@ const handleSearch = (value: string) => {
 
 const handleAction = async () => {
   await todoGridRef.value?.fetchTodos();
-}
+};
 </script>
 
 <template>
   <div class="p-4">
     <Container>
       <div class="mt-8 mb-16 w-full">
-        <Search @search="handleSearch"></Search>
+        <Search @search="handleSearch" />
       </div>
-      <TodoGrid 
+      <TodoGrid
         ref="todoGridRef"
         @create-modal="createModal = true"
-        @update-modal="updateModal = true"
+        @update-modal="toggleUpdateModal"
       />
       <div>
         <CreateModal
@@ -47,7 +59,7 @@ const handleAction = async () => {
           v-if="updateModal"
           :open="true"
           :todo="actualTodo"
-          @close="updateModal = false"
+          @close="toggleUpdateModal"
           @update="handleAction"
         />
       </div>

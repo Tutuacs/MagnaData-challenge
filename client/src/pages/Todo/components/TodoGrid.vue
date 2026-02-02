@@ -2,7 +2,6 @@
 import { PlusIcon } from "@heroicons/vue/24/outline";
 import TodoItem from "./TodoItem.vue";
 import { useTodo } from "@/composables/Todo";
-import { Todo } from "@/types/Todo";
 
 // TodoGrid.vue html imported from: https://www.tailwindgen.com/
 
@@ -17,10 +16,6 @@ fetchTodos();
 
 const handleCreateNew = () => {
   emit("create-modal");
-};
-
-const handleUpdate = () => {
-  emit("update-modal");
 };
 
 const handleDelete = () => {
@@ -41,12 +36,11 @@ const handleDelete = () => {
     </button>
     <TodoItem
       class="hover:shadow-lg hover:scale-101"
-      @update-modal="handleUpdate"
       @delete-todo="handleDelete"
       v-for="item in todos"
       :key="item.id"
       :item="item"
-      >{{ item }}</TodoItem
+    />
     >
   </div>
 </template>
