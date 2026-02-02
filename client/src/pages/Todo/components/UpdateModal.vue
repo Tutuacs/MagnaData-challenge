@@ -9,10 +9,9 @@ import {
   TransitionChild,
   TransitionRoot,
 } from "@headlessui/vue";
-import {
-  ExclamationCircleIcon,
-} from "@heroicons/vue/24/outline";
-import { UpdateTodoDto } from "@/types/Todo";
+import { ExclamationCircleIcon } from "@heroicons/vue/24/outline";
+import { Todo, UpdateTodoDto } from "@/types/Todo";
+import { useTodo } from "@/composables/Todo";
 
 const props = defineProps({
   open: {
@@ -20,24 +19,29 @@ const props = defineProps({
     req: true,
   },
   todo: {
-    type: Object as () => UpdateTodoDto,
+    type: Object as () => Todo,
     req: true,
   },
 });
 
-const updatedTodo = ref<UpdateTodoDto>({ ...props.todo });
+const updatedTodo = ref<UpdateTodoDto>({
+  description: props.todo.description,
+  completed: props.todo.completed ? true : false,
+});
 const text = ref<string>(
-  updatedTodo.value.completed ? "Todo Completed" : "Todo Not Completed",
+  updatedTodo.value.completed ? "Todo Concluído" : "Todo não Concluído",
 );
 
 const emit = defineEmits(["close", "update"]);
 
+const { updateTodo } = useTodo();
+
 const handleCheckboxText = () => {
   updatedTodo.value.completed = !updatedTodo.value.completed;
   if (!updatedTodo.value.completed) {
-    text.value = "Todo Not Completed";
+    text.value = "Todo não Concluído";
   } else {
-    text.value = "Todo Completed";
+    text.value = "Todo Concluído";
   }
 };
 
@@ -45,7 +49,8 @@ const handleClose = () => {
   emit("close");
 };
 
-const handleUpdate = () => {
+const handleUpdate = async () => {
+  await updateTodo(updatedTodo.value, props.todo.id);
   emit("update");
   emit("close");
 };
@@ -106,7 +111,7 @@ const handleUpdate = () => {
                         <DialogTitle
                           as="h3"
                           class="text-base font-semibold text-white"
-                          >Update Todo</DialogTitle
+                          >Atualizar To-do</DialogTitle
                         >
                       </div>
                     </div>
@@ -114,18 +119,18 @@ const handleUpdate = () => {
                       <div class="mt-4 w-9/10">
                         <div class="flex flex-col gap-2">
                           <label for="todo-description" class="text-white"
-                            >Description</label
+                            >Descrição</label
                           >
                           <input
                             type="text"
                             class="bg-white rounded w-full px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-500"
                             placeholder="Update API endpoint"
                             id="todo-description"
-                            :value="todo.description"
+                            v-model="updatedTodo.description"
                           />
                           <div class="flex flex-col gap-2">
                             <label for="todo-completed" class="text-white"
-                              >Completed</label
+                              >Status</label
                             >
                             <div
                               class="flex items-center gap-2"
@@ -135,7 +140,6 @@ const handleUpdate = () => {
                                 type="checkbox"
                                 id="todo-completed"
                                 class="size-5 rounded border-gray-300 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-800 cursor-pointer accent-green-500"
-                                :checked="todo.completed"
                                 v-model="updatedTodo.completed"
                               />
                               <label

@@ -2,7 +2,7 @@ export interface Todo {
   id: string;
   description: string;
   createdAt: Date;
-  completedAt: Date | null;
+  completed: Date | null;
 }
 
 export interface CreateTodoDTO {

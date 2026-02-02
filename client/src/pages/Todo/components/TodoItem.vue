@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useTodo } from "@/composables/Todo";
 import { Todo } from "@/types/Todo";
 import { DocumentDuplicateIcon, TrashIcon } from "@heroicons/vue/24/outline";
 
@@ -10,19 +11,17 @@ const props = defineProps({
   },
 });
 
+const { deleteTodo, actualTodo } = useTodo();
+
 const copyToClipboard = async (text: string) => {
-  try {
-    await navigator.clipboard.writeText(text);
-    console.log("ID copiado!");
-    handleCopyId();
-  } catch (err) {
-    console.error("Erro ao copiar:", err);
-  }
+  await navigator.clipboard.writeText(text);
+  handleCopyId();
 };
 
 const emit = defineEmits(["update-modal", "delete-todo", "copy-id"]);
 
 const handleUpdate = () => {
+  actualTodo.value = props.item;
   emit("update-modal");
 };
 
@@ -30,7 +29,8 @@ const handleCopyId = () => {
   emit("copy-id");
 };
 
-const handleDelete = () => {
+const handleDelete = async () => {
+  await deleteTodo(props.item.id);
   emit("delete-todo");
 };
 </script>
@@ -42,7 +42,7 @@ const handleDelete = () => {
         <div class="flex justify-between items-start mb-4">
           <div class="flex items-center gap-2">
             <span class="px-3 py-1 bg-white rounded-full text-sm font-medium">
-              {{ item.completedAt ? "Concluído" : "Pendente" }}
+              {{ item.completed ? "Concluído" : "Pendente" }}
             </span>
           </div>
           <div class="flex flex-col gap-2">
@@ -68,25 +68,35 @@ const handleDelete = () => {
             </div>
           </div>
         </div>
-        <p class="text-gray-800 line-clamp-3">{{ item.description }}</p>
+        <p class="text-white line-clamp-3">{{ item.description }}</p>
       </div>
       <div class="grid grid-cols-2 border-t border-slate-300">
-        <div class="p-3 border-r border-slate-300 text-center">
-          <div class="font-medium text-sm">{{ item.createdAt.toLocaleDateString('pt-BR') }}</div>
+        <div class="p-3 border-r border-slate-300 text-center text-white">
+          <div class="font-medium text-sm">
+            {{
+              item.createdAt
+                ? new Date(item.createdAt).toLocaleDateString("pt-BR")
+                : "N/A"
+            }}
+          </div>
         </div>
         <button
           class="group cursor-pointer p-3 text-center bg-amber-400 rounded-br-xl"
-          :class="{ 'bg-green-500': item.completedAt }"
+          :class="{ 'bg-green-500': item.completed }"
           @click="handleUpdate"
         >
           <div class="font-medium text-sm">
-            <span v-if="!item.completedAt" class="group-hover:hidden"
+            <span v-if="!item.completed" class="group-hover:hidden"
               >Pendente</span
             >
-            <span v-if="!item.completedAt" class="hidden group-hover:block"
+            <span v-if="!item.completed" class="hidden group-hover:block"
               >Atualizar</span
             >
-            <span v-if="item.completedAt">{{ item.completedAt.toLocaleDateString('pt-BR') }}</span>
+            <span v-if="item.completed">{{
+              item.completed
+                ? new Date(item.completed).toLocaleDateString("pt-BR")
+                : "N/A"
+            }}</span>
           </div>
         </button>
       </div>

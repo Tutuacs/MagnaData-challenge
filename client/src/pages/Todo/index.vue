@@ -2,55 +2,53 @@
 import { ref } from "vue";
 import CreateModal from "./components/CreateModal.vue";
 import UpdateModal from "./components/UpdateModal.vue";
-import { UpdateTodoDto } from "@/types/Todo";
+import { Todo, UpdateTodoDto } from "@/types/Todo";
 import Container from "@/components/Container.vue";
 import TodoGrid from "./components/TodoGrid.vue";
 import Search from "@/components/Search.vue";
+import { useTodo } from "@/composables/Todo";
 
 const createModal = ref(false);
 const updateModal = ref(false);
-const todo = ref<UpdateTodoDto | null>(null);
-todo.value = {
-  description: "Initial Todo",
-  completed: false,
-};
+const todoGridRef = ref<InstanceType<typeof TodoGrid>>();
 
 const search = ref("");
 
+const { actualTodo, loading } = useTodo();
+
 const handleSearch = (value: string) => {
   search.value = value;
-  // Aqui você pode fazer outras operações com o valor
-  console.log('Search value:', value);
 };
+
+const handleAction = async () => {
+  await todoGridRef.value?.fetchTodos();
+}
 </script>
 
 <template>
   <div class="p-4">
-    <!-- <button class="bg-slate-200" @click="createModal = true">
-      Open Create Modal
-    </button>
-    <hr />
-    <button class="bg-slate-200" @click="updateModal = true">
-      Open Edit Modal
-    </button> -->
     <Container>
       <div class="mt-8 mb-16 w-full">
         <Search @search="handleSearch"></Search>
       </div>
-      <TodoGrid @create-modal="createModal = true" @update-modal="updateModal = true" />
+      <TodoGrid 
+        ref="todoGridRef"
+        @create-modal="createModal = true"
+        @update-modal="updateModal = true"
+      />
       <div>
         <CreateModal
           v-if="createModal"
           :open="true"
           @close="createModal = false"
-          @create="console.log('created')"
+          @create="handleAction"
         />
         <UpdateModal
           v-if="updateModal"
           :open="true"
-          :todo="todo"
+          :todo="actualTodo"
           @close="updateModal = false"
-          @update="console.log('updated')"
+          @update="handleAction"
         />
       </div>
     </Container>

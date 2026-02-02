@@ -1,6 +1,8 @@
-<script setup>
+<script setup lang="ts">
 // Modal.vue imported from: https://tailwindcss.com/plus/ui-blocks/application-ui/overlays/modal-dialogs
 // Icons from: https://heroicons.com/
+import { useTodo } from "@/composables/Todo";
+import { CreateTodoDTO } from "@/types/Todo";
 import {
   Dialog,
   DialogPanel,
@@ -9,12 +11,18 @@ import {
   TransitionRoot,
 } from "@headlessui/vue";
 import { CheckCircleIcon } from "@heroicons/vue/24/outline";
+import { ref } from "vue";
 
 const props = defineProps({
   open: {
     type: Boolean,
     req: true,
   },
+});
+
+const { createTodo, loading } = useTodo();
+const newTodo = ref<CreateTodoDTO>({
+  description: "",
 });
 
 const emit = defineEmits(["close", "create"]);
@@ -24,6 +32,7 @@ const handleClose = () => {
 };
 
 const handleCreate = () => {
+  createTodo(newTodo.value);
   emit("create");
   emit("close");
 };
@@ -84,7 +93,7 @@ const handleCreate = () => {
                         <DialogTitle
                           as="h3"
                           class="text-base font-semibold text-white"
-                          >Create Todo</DialogTitle
+                          >Adiciona To-do</DialogTitle
                         >
                       </div>
                     </div>
@@ -92,14 +101,15 @@ const handleCreate = () => {
                       <div class="mt-4 w-9/10">
                         <div class="flex flex-col gap-2">
                           <label for="todo-description" class="text-white"
-                            >Description</label
+                            >Descrição</label
                           >
-                        <input
+                          <input
                             type="text"
                             class="bg-white rounded w-full px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-500"
                             placeholder="Create API endpoint"
                             id="todo-description"
-                        />
+                            v-model="newTodo.description"
+                          />
                         </div>
                       </div>
                     </div>
