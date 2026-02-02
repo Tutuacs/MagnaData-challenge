@@ -14,23 +14,25 @@ public class TodoRepository(ApplicationDbContext db) : ITodoRepository
         var affectedRows = await _db.SaveChangesAsync();
         return affectedRows;
     }
-    
+
     public async Task<List<TodoDb>> GetAllAsync()
     {
         return await _db.Todo.ToListAsync();
     }
-    
+
     public async Task<TodoDb?> GetByIdAsync(Guid id)
     {
         return await _db.Todo.FindAsync(Convert.ToString(id));
     }
-    
+
     public async Task<int> UpdateAsync(Guid id, UpdateTodoDto todo)
     {
         var UpdatedRows = -1;
         var exists = await _db.Todo.FindAsync(Convert.ToString(id));
         if (exists != null)
         {
+            var savedDate = exists.Completed;
+            var savedDescription = exists.Description;
             exists.Description = !string.IsNullOrEmpty(todo.Description) ? todo.Description : exists.Description;
             if (todo.Completed.HasValue)
             {
@@ -39,7 +41,14 @@ public class TodoRepository(ApplicationDbContext db) : ITodoRepository
                     : null;
             }
             UpdatedRows = await _db.SaveChangesAsync();
+
+            // Quando não há mudanças, SaveChangesAsync retorna 0
+            if (savedDate == exists.Completed && savedDescription == exists.Description)
+            {
+                UpdatedRows = 1;
+            }
         }
+
         return UpdatedRows;
     }
     
