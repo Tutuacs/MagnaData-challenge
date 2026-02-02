@@ -37,7 +37,7 @@ const handleSearch = (value: string) => {
       <div class="mt-8 mb-16 w-full">
         <Search @search="handleSearch"></Search>
       </div>
-      <TodoGrid> </TodoGrid>
+      <TodoGrid @create-modal="createModal = true" @update-modal="updateModal = true" />
       <div>
         <CreateModal
           v-if="createModal"

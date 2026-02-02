@@ -1,13 +1,31 @@
 <script setup>
-import TodoItem from './TodoItem.vue';
+import { PlusIcon } from "@heroicons/vue/24/outline";
+import TodoItem from "./TodoItem.vue";
 
 // TodoGrid.vue html imported from: https://www.tailwindgen.com/
+
+const emit = defineEmits(["create-modal", "update-modal"]);
+
+const handleCreateNew = () => {
+  emit("create-modal");
+};
+
+const handleUpdate = () => {
+  emit("update-modal");
+};
 </script>
 
 <template>
-  <div class="grid grid-cols-8 gap-2">
-    <div class="p-16 bg-green-500 rounded-xl col-span-2 row-span-2">+</div>
-    <TodoItem v-for="item in 10" :key="item">{{ item }}</TodoItem>
+  <div
+    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2"
+  >
+    <button @click="handleCreateNew"
+      class="group cursor-pointer p-8 hover:scale-101 bg-green-500 hover:bg-green-600 rounded-xl col-span-1 sm:col-span-2 md:col-span-2 lg:col-span-2 row-span-2 transition-colors duration-200 flex flex-col items-center justify-center gap-2 text-white font-medium shadow-md hover:shadow-lg"
+    >
+      <PlusIcon class="h-8 w-8 group-hover:scale-110 transition-transform" />
+      <span>Adicionar novo</span>
+    </button>
+    <TodoItem class="hover:shadow-lg hover:scale-101" @update-modal="handleUpdate" v-for="item in 10" :key="item" :item="item">{{ item }}</TodoItem>
   </div>
 </template>
 
