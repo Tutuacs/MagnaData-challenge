@@ -1,5 +1,6 @@
 namespace api.Data;
 
+using Microsoft.Extensions.Configuration;
 using NRedisStack;
 using NRedisStack.RedisStackCommands;
 using StackExchange.Redis;
@@ -8,9 +9,10 @@ public class CacheContext
 {
     private readonly IDatabase db;
 
-    public CacheContext()
+    public CacheContext(IConfiguration configuration)
     {
-        var muxer = ConnectionMultiplexer.Connect("localhost:6379");
+        var connectionString = configuration.GetConnectionString("Redis") ?? "localhost:6379";
+        var muxer = ConnectionMultiplexer.Connect(connectionString);
         db = muxer.GetDatabase();
     }
 
