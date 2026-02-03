@@ -18,6 +18,7 @@ Sistema completo de gerenciamento de tarefas com API .NET e interface Vue 3.
 
 ### Executar tudo com Docker Compose
 
+Os comandos de docker compose podem variar de acordo com a versão do Docker instalada. Use `docker compose` ou `docker-compose` conforme sua instalação.
 ```bash
 # Build e iniciar todos os serviços
 docker-compose up -d
@@ -29,12 +30,38 @@ docker-compose logs -f
 docker-compose down
 ```
 
+### Executar localmente
+
+```bash
+# Iniciar MySQL e Redis
+cd api && docker-compose up -d
+```
+Após subir os serviços de dados, faça as migrations e rode a API localmente:
+```bash
+# No diretório da API
+dotnet restore
+dotnet ef database update
+dotnet run
+```
+Podemos testar na rota do Swagger: `http://localhost:5284/swagger`
+
+Agora podemos rodar o frontend localmente:
+```bash
+# No diretório do client
+pnpm install # ou yarn/npm
+pnpm dev
+```
+
+Importante ressaltar que ao rodar localmente, a API estará na porta `5284` e o frontend na `5173`.
+O frontend está sem um arquivo de configuração `.env` definido, neste caso o endpoint da API está hardcoded
+e pode ser alterado em `client/src/services/main.ts`.
+
 **Acessos:**
 - Frontend: http://localhost:4173
 - API: http://localhost:5000
-- Swagger: http://localhost:5000/swagger
-- MySQL: localhost:3300
-- Redis: localhost:6379
+- Swagger: http://localhost:5000/swagger (API definida para rodar em ambiente de desenvolvimento, é possivel alterar no docker-compose)
+- MySQL: http://localhost:3300
+- Redis: http://localhost:6379
 
 ### Serviços inclusos
 
@@ -148,4 +175,4 @@ dotnet ef database update
 
 **Desenvolvido para o MagnaData Challenge**
 
-"Sendo bem direto: a documentação atual, juntamente da do front-end e back-end foram geradas por IA após descrição detalhada do projeto, funcionalidades e tecnologias a serem usadas. Mais por motivos de tempo! Foram usadas consultas para o desenvolvimento do projeto, estão referenciadas na pasta resource/"
+"Parte da documentação foi gerada usando IA para facilitar no template, algumas peculiaridades do projeto foram incluídas"
