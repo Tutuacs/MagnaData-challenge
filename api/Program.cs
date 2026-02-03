@@ -30,6 +30,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddScoped<ITodoService, TodoService>();
 builder.Services.AddTransient<ITodoRepository, TodoRepository>();
+builder.Services.AddSingleton<CacheContext>();
 
 var app = builder.Build();
 
