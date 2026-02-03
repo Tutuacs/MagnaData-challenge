@@ -25,9 +25,9 @@ public class TodoController(ITodoService todoService) : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetTodos()
+    public async Task<IActionResult> GetTodos([FromQuery] string? type, [FromQuery] string? value)
     {
-        var result = await todoService.GetTodosAsync();
+        var result = await todoService.GetTodosAsync(type, value);
         return StatusCode((int)result.StatusCode, new ApiResponse<object>
         {
             Data = result.Data,

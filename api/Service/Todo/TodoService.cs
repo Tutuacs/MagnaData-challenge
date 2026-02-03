@@ -38,9 +38,9 @@ public partial class TodoService(ITodoRepository todoRepository, ILogger<TodoSer
         return new ServiceResponse<string> { StatusCode = System.Net.HttpStatusCode.Created  };
     }
 
-    public async Task<ServiceResponse<List<TodoDb>>> GetTodosAsync()
+    public async Task<ServiceResponse<List<TodoDb>>> GetTodosAsync(string? type, string? value)
     {
-        var result = await _todoRepository.GetAllAsync();
+        var result = await _todoRepository.GetAllAsync(type, value);
         return new ServiceResponse<List<TodoDb>> { Data = result };
     }
 

@@ -1,6 +1,7 @@
 using api.Model.Dtos.Todo;
 using api.Model.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 
 namespace api.Data.Repository.Todo;
 
@@ -15,8 +16,27 @@ public class TodoRepository(ApplicationDbContext db) : ITodoRepository
         return affectedRows;
     }
 
-    public async Task<List<TodoDb>> GetAllAsync()
+    public async Task<List<TodoDb>> GetAllAsync(string? type, string? value)
     {
+        if (string.IsNullOrEmpty(type) || string.IsNullOrEmpty(value))
+        {
+            return await _db.Todo.ToListAsync();
+        }
+
+        if (Strings.Equals(type.ToLower(), "id"))
+        {
+            var todo = await _db.Todo.FindAsync(value);
+            return todo != null ? [todo] : [];
+        }
+
+        if (Strings.Equals(type.ToLower(), "description"))
+        {
+            var todos = await _db.Todo
+                .Where(t => EF.Functions.Like(t.Description, $"%{value}%"))
+                .ToListAsync();
+            return todos;
+        }
+
         return await _db.Todo.ToListAsync();
     }
 
