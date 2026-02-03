@@ -37,6 +37,9 @@ pnpm install
 
 ## ▶️ Executar
 
+Para rodar localmente é preciso atualizar a configuração do endpoint da API em `src/services/main.ts`.
+<br> Como não foi implementado um arquivo de configuração `.env`, o endpoint está hardcoded para o docker (`http://localhost:5000`).
+
 ```bash
 # Desenvolvimento
 pnpm dev
@@ -57,7 +60,7 @@ Configure o endpoint da API em `src/services/main.ts`:
 
 ```typescript
 const api = axios.create({
-  baseURL: 'http://localhost:5000'
+  baseURL: 'http://localhost:5000' // Para docker ou 'http://localhost:5284' para dev local
 });
 ```
 
