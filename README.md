@@ -148,4 +148,4 @@ dotnet ef database update
 
 **Desenvolvido para o MagnaData Challenge**
 
-"Sendo bem direto: a documentação atual, juntamente da do front-end e back-end foram geradas por IA após descrição detalhada do projeto, funcionalidades e tecnologias a serem usadas. Mais por motivos de tempo!"
+"Sendo bem direto: a documentação atual, juntamente da do front-end e back-end foram geradas por IA após descrição detalhada do projeto, funcionalidades e tecnologias a serem usadas. Mais por motivos de tempo! Foram usadas consultas para o desenvolvimento do projeto, estão referenciadas na pasta resource/"
