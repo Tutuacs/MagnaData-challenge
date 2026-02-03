@@ -105,6 +105,7 @@ const handleCreate = async () => {
                           >
                           <input
                             type="text"
+                            @keypress.enter="handleCreate"
                             class="bg-white rounded w-full px-2 py-1 focus:outline-none focus:ring-2 focus:ring-green-500"
                             placeholder="Create API endpoint"
                             id="todo-description"
