@@ -1,0 +1,20 @@
+# Node modules
+node_modules/
+
+# Build output
+dist/
+dist-ssr/
+
+# Logs
+*.log
+
+# Cache
+.cache/
+.vite/
+
+# Env files
+.env*.local
+
+# Editor
+.vscode/
+.idea/

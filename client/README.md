@@ -1,42 +1,135 @@
-# client
+# 🎨 Client - MagnaData Challenge
 
-This template should help get you started developing with Vue 3 in Vite.
+Interface moderna para gerenciamento de tarefas, desenvolvida com Vue 3, TypeScript e Tailwind CSS.
 
-## Recommended IDE Setup
+## 🛠️ Tecnologias
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- **Vue 3** - Framework progressivo
+- **TypeScript** - Tipagem estática
+- **Vite** - Build tool e dev server
+- **Vue Router** - Navegação SPA
+- **Pinia** - Gerenciamento de estado
+- **Tailwind CSS** - Estilização utilitária
+- **Heroicons** - Ícones
+- **Axios** - Cliente HTTP
 
-## Recommended Browser Setup
+## 🏗️ Arquitetura
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+```
+Components → Composables → Services → API
+     ↓
+  Pages (Routes)
+```
 
-## Type Support for `.vue` Imports in TS
+**Estrutura**: Pages (rotas) → Components (UI) → Composables (lógica) → Services (HTTP)
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+## 📦 Pré-requisitos
 
-## Customize configuration
+- Node.js 18+ 
+- pnpm (ou npm/yarn)
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+## ⚙️ Instalação
 
-## Project Setup
-
-```sh
+```bash
+cd client
 pnpm install
 ```
 
-### Compile and Hot-Reload for Development
+## ▶️ Executar
 
-```sh
+```bash
+# Desenvolvimento
 pnpm dev
-```
 
-### Type-Check, Compile and Minify for Production
-
-```sh
+# Build produção
 pnpm build
+
+# Preview build (porta usada no Docker)
+pnpm preview
 ```
+
+**Acesso Dev**: `http://localhost:5173`  
+**Acesso Preview/Docker**: `http://localhost:4173`
+
+## 🌐 API
+
+Configure o endpoint da API em `src/services/main.ts`:
+
+```typescript
+const api = axios.create({
+  baseURL: 'http://localhost:5000'
+});
+```
+
+## 📁 Estrutura
+
+```
+client/
+├── src/
+│   ├── components/        # Componentes reutilizáveis
+│   │   ├── Container.vue
+│   │   ├── Navbar.vue
+│   │   └── Search.vue
+│   ├── composables/       # Lógica compartilhada
+│   │   └── Todo.ts
+│   ├── pages/             # Páginas/rotas
+│   │   └── Todo/
+│   │       ├── index.vue
+│   │       └── components/
+│   ├── router/            # Configuração rotas
+│   │   └── index.ts
+│   ├── services/          # Chamadas API
+│   │   ├── main.ts
+│   │   └── Todo/
+│   ├── stores/            # Estado global (Pinia)
+│   │   └── counter.ts
+│   ├── types/             # TypeScript types
+│   │   └── Todo.ts
+│   ├── App.vue
+│   └── main.ts
+├── public/
+├── index.html
+├── vite.config.ts
+├── tailwind.config.js
+└── package.json
+```
+
+## ✨ Funcionalidades
+
+- Listar tarefas
+- Criar nova tarefa
+- Atualizar tarefa (marcar como concluída)
+- Deletar tarefa
+- Buscar por ID ou descrição
+- Copiar ID para área de transferência
+- Interface responsiva
+
+## 🎨 Componentes Principais
+
+### `Search.vue`
+Campo de busca com toggle ID/Descrição
+
+### `TodoGrid.vue`
+Grid de cards com todas as tarefas
+
+### `TodoItem.vue`
+Card individual de tarefa com ações (copiar, deletar, atualizar)
+
+### `CreateModal.vue` / `UpdateModal.vue`
+Modais para criar/editar tarefas
+
+## 🔄 Composables
+
+### `useTodo()`
+Gerencia estado e lógica das tarefas:
+- `todos` - Lista de tarefas
+- `actualTodo` - Tarefa selecionada
+- `loading` - Estado de carregamento(não implementado)
+- `fetchTodos()` - Buscar tarefas
+- `createTodo()` - Criar tarefa
+- `deleteTodo()` - Deletar tarefa
+- ...e mais
+
+---
+
+**Desenvolvido com Vue 3 + TypeScript**

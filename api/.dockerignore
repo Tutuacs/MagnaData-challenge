@@ -1,0 +1,15 @@
+# Arquivos de build
+bin/
+obj/
+*.user
+*.suo
+
+# Dependências
+packages/
+
+# Logs
+*.log
+
+# Arquivos temporários
+*.tmp
+*.temp
