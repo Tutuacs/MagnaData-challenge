@@ -25,6 +25,7 @@ CacheContext → Redis
 - .NET 10.0 SDK
 - MySQL 8.0+
 - Redis 6.0+
+- Docker (opcional)
 
 ## ⚙️ Configuração
 
@@ -39,9 +40,18 @@ Edite `appsettings.json`:
 }
 ```
 
-Redis: `localhost:6379` (padrão em `Data/CacheContext.cs`)
-
 ## ▶️ Executar
+
+Para rodar o projeto existem duas possibilidades:
+### 1. Usando Docker
+```bash
+docker-compose up --build
+```
+
+Existe a imagem do backend `.NET` mas não foi incluída no compose para facilitar o desenvolvimento local.
+<br> É possivel usar a imagem isolada com algumas configurações extras, contudo recomenda-se usar o compose
+apenas para os serviços de dados (MySQL e Redis).
+<br> Após subir os serviços, rode o backend localmente conforme instruções abaixo.
 
 ```bash
 dotnet restore
@@ -49,7 +59,17 @@ dotnet ef database update
 dotnet run
 ```
 
-**Acesso**: `http://localhost:5000` | **Swagger**: `http://localhost:5000/swagger`
+### 2. Localmente
+
+Tendo os pré-requisitos instalados, rode:
+
+```bash
+dotnet restore
+dotnet ef database update
+dotnet run
+```
+
+**Acesso**: `http://localhost:5284` | **Swagger**: `http://localhost:5284/swagger`
 
 ## 🌐 Endpoints
 
@@ -61,24 +81,24 @@ dotnet run
 | `PUT` | `/todo/{id}` | Atualiza |
 | `DELETE` | `/todo/{id}` | Deleta |
 
+## 📝 Validações
+- **Descrição**: obrigatória, 3-10 caracteres
+- **Conclusão**: opcional, padrão `false` (data definida pelo sistema por segurança)
+- Não foi implementada validação de params para os endpoints de filtro (GET /todo)
+
 **Exemplo**:
 ```json
 POST /todo
-{ "description": "Tarefa" }
+{ "description": "Tarefa com +10 lenght" }
 ```
 
 ## 💾 Cache
 
+Neste projeto, o cache Redis é utilizado para otimizar o desempenho das operações de leitura, reduzindo a carga no banco de dados MySQL.
+<br>A estratégia de cache adotada inclui:
 - **Lista** (`/todo`): key `"todos"`, TTL 1h
 - **Item** (`/todo/{id}`): key `"todo/{id}"`, TTL 1h
 - **Invalidação**: ao criar/atualizar/deletar
-
-## 🗄️ Migrations
-
-```bash
-dotnet ef migrations add NomeMigration
-dotnet ef database update
-```
 
 ---
 
