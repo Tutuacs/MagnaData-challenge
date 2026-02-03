@@ -13,16 +13,16 @@ const props = defineProps({
 });
 
 const toggleUpdateModal = inject<() => void>("todoModal")!;
-const toggleCopyAction = inject<() => void>("copyAction")!;
+const copyIdAction = inject<() => void>("copyIdAction")!;
 
 const { deleteTodo, actualTodo } = useTodo();
 
 const copyToClipboard = async (text: string) => {
   await navigator.clipboard.writeText(text);
-  toggleCopyAction();
+  copyIdAction();
 };
 
-const emit = defineEmits(["update-modal", "delete-todo", "copy-id"]);
+const emit = defineEmits(["delete-todo"]);
 
 const handleUpdate = () => {
   actualTodo.value = props.item;

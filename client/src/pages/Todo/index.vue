@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { provide, ref } from "vue";
+import { provide, ref, nextTick } from "vue";
 import CreateModal from "./components/CreateModal.vue";
 import UpdateModal from "./components/UpdateModal.vue";
-import { Todo, UpdateTodoDto } from "@/types/Todo";
 import Container from "@/components/Container.vue";
 import TodoGrid from "./components/TodoGrid.vue";
 import Search from "@/components/Search.vue";
@@ -10,38 +9,54 @@ import { useTodo } from "@/composables/Todo";
 
 const createModal = ref(false);
 const updateModal = ref(false);
-const copyAction = ref(false);
+const searchQuery = ref("");
+const searchType = ref(false);
 const todoGridRef = ref<InstanceType<typeof TodoGrid>>();
+const { actualTodo, loading } = useTodo();
 
+// search action
+const handleAction = async () => {
+  if (searchQuery.value.trim() !== "") {
+    const type = searchType.value ? 'id' : 'description';
+    await todoGridRef.value?.fetchTodos({ type, value: searchQuery.value });
+    return;
+  }
+  await todoGridRef.value?.fetchTodos({});
+};
+
+// open UpdateModal
 const toggleUpdateModal = () => {
   updateModal.value = !updateModal.value;
 };
 
-const toggleCopyAction = () => {
-  copyAction.value = !copyAction.value;
+// use IdFilter
+const copyIdAction = () => {
+  searchType.value = true;
 };
 
 provide("todoModal", toggleUpdateModal);
-provide("copyAction", toggleCopyAction);
+provide("copyIdAction", copyIdAction);
 
-const search = ref("");
-
-const { actualTodo, loading } = useTodo();
-
-const handleSearch = (value: string) => {
-  search.value = value;
+const handleSearch = async (payload: { type: boolean; value: string }) => {
+  // https://vuejs.org/api/general.html#nexttick
+  searchType.value = payload.type;
+  searchQuery.value = payload.value;
+  await nextTick();
+  handleAction();
 };
 
-const handleAction = async () => {
-  await todoGridRef.value?.fetchTodos();
-};
+provide("handleSearch", handleSearch);
 </script>
 
 <template>
   <div class="p-4">
     <Container>
       <div class="mt-8 mb-16 w-full">
-        <Search @search="handleSearch" />
+        <Search
+          @search="handleSearch"
+          :searchType="searchType"
+          :searchQuery="searchQuery"
+        />
       </div>
       <TodoGrid
         ref="todoGridRef"

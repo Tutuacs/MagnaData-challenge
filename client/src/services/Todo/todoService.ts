@@ -9,8 +9,11 @@ export function TodoService() {
         return apiClient.post(METHOD_URL, data);
     }
 
-    const fetchTodos = async () => {
-        return apiClient.get(METHOD_URL);
+    const fetchTodos = async ({type, value}: {type?: 'id' | 'description', value?: string}) => {
+        if (!type || !value) {
+            return apiClient.get(METHOD_URL);
+        }
+        return apiClient.get(METHOD_URL, { params: { type, value } });
     };
 
     const findTodoById = async (id: string) => {

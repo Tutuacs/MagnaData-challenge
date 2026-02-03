@@ -11,9 +11,9 @@ export function useTodo() {
 
   const todoService = TodoService();
 
-  const fetchTodos = async () => {
+  const fetchTodos = async ({type, value}: {type?: 'id' | 'description', value?: string}) => {
     loading.value = true;
-    const response = await todoService.fetchTodos();
+    const response = await todoService.fetchTodos({type, value});
     todos.value = response.data.data;
     loading.value = false;
   };

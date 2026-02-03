@@ -7,19 +7,28 @@ import { useTodo } from "@/composables/Todo";
 
 const emit = defineEmits(["create-modal", "update-modal"]);
 
-const { fetchTodos, todos, loading } = useTodo();
+const { fetchTodos: searchTodos, todos, loading } = useTodo();
+
+const fetchTodos = async ({type, value}: {type?: 'id' | 'description', value?: string}) => {
+  if (type && value) {
+    await searchTodos({ type, value });
+    return;
+  }
+  await searchTodos({});
+};
+
 defineExpose({
   fetchTodos,
 });
 
-fetchTodos();
+fetchTodos({});
 
 const handleCreateNew = () => {
   emit("create-modal");
 };
 
 const handleDelete = () => {
-  fetchTodos();
+  fetchTodos({});
 };
 </script>
 
@@ -41,7 +50,6 @@ const handleDelete = () => {
       :key="item.id"
       :item="item"
     />
-    >
   </div>
 </template>
 
