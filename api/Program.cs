@@ -14,7 +14,10 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy
-                .WithOrigins("http://localhost:5173")
+                .WithOrigins(
+                    "http://localhost:5173",
+                    "http://localhost:4173"
+                )
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
@@ -33,6 +36,13 @@ builder.Services.AddTransient<ITodoRepository, TodoRepository>();
 builder.Services.AddSingleton<CacheContext>();
 
 var app = builder.Build();
+
+// Aplicar migrations automaticamente
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
+}
 
 // Middleware de Exception
 app.UseMiddleware<ExceptionHandlingMiddleware>();
